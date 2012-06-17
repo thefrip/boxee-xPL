@@ -21,6 +21,7 @@ class Xpl() :
         self.ip = ip
         self.port = 3865
         self.buff = 1500
+        self.version = "1.0"
         self._stop = False
         addr = ("0.0.0.0",self.port)
         
@@ -35,8 +36,8 @@ class Xpl() :
             self.port = 50000
             foundPort = False
             while( not foundPort ):
-                print("Binding to 50000")
-                addr = ("127.0.0.1",self.port)
+                xbmc.log("FA:Binding to 50000")
+                addr = (self.ip, self.port)
                 try :
                     self.udpSocket.bind(addr)
                     foundPort = True
@@ -53,10 +54,10 @@ class Xpl() :
         
     def listenForPackets(self):
         xbmc.log( "FA:Listening in for packets and stuff" )
-        time.sleep(2)
         try: 
             while( self._stop != True) :
                 xbmc.log( "FA:waiting")
+                xbmc.log("FA:" + str(self.udpSocket.getsockname()))
                 readable, writeable, errored = select.select([self.udpSocket],[],[],60)
                 if len(readable) == 1 :
                     xbmc.log("FA: Got data! Wee!")
@@ -73,7 +74,7 @@ class Xpl() :
     
     def heartBeat(self):
         xbmc.log( "Sending heartbeat" )
-        self.sendBroadcast("xpl-stat", "*","hbeat.app", "interval=1\nport=" + str(self.port) + "\nremote-ip=" + self.ip)
+        self.sendBroadcast("xpl-stat", "*","hbeat.app", "interval=1\nport=" + str(self.port) + "\nremote-ip=" + self.ip + "\nversion=" + self.version)
         self.heartbeat_timer = threading.Timer(60, self.heartBeat)
         self.heartbeat_timer.start()
 
