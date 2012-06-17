@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.xpl.plugin"
+<addon id="service.xpl.plugin"
        name="xPL plugin"
        version="0.1"
-       provider-name="w">
+       provider-name="ParasIT">
   <requires>
     <import addon="xbmc.python" version="1.0"/>
   </requires>
