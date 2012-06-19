@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.xpl"
+       name="xPL plugin"
+       version="0.1"
+       provider-name="ParasIT">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.service"
+             library="default.py" start="login|startup">
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <description>xPL is a home automation protocol. This plugin xPL enables xbmc so that xbmc will issue xpl messages stating it's status using the media scheme. Xbmc will also respond to media commands and osd messages. See http://xplproject.org.uk/ for more information about xPL.</description>
+    <summary>xPL enables xbmc. </summary>
+  </extension>
+</addon>
