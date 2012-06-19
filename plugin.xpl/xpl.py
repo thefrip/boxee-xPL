@@ -46,9 +46,9 @@ class Xpl() :
                     self.port += 1
         self.heartBeat()
         xbmc.log("FA:Heartbeat sent")
-        t = Thread(target=self.listenForPackets)
+        self.t = Thread(target=self.listenForPackets)
         xbmc.log("Created listen Thread")
-        t.start()
+        self.t.start()
         print( "Main thread returns")
         
         
@@ -57,13 +57,9 @@ class Xpl() :
         xbmc.log( "FA:Listening in for packets and stuff" )
         try: 
             while( self._stop != True) :
-                xbmc.log( "FA:waiting")
-                xbmc.log("FA:" + str(self.udpSocket.getsockname()))
                 readable, writeable, errored = select.select([self.udpSocket],[],[],self._socketTimeout)
                 if len(readable) == 1 :
-                    xbmc.log("FA: Got data! Wee!")
                     data,addr = self.udpSocket.recvfrom(self.buff)
-                    xbmc.log( "FA:calling parse" )
                     self.parse(data)
         except(SystemExit): 
             self.stop()

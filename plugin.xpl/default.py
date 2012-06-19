@@ -94,7 +94,7 @@ class XplPlayer( xbmc.Player ) :
 				if part != "}":
 					value=part.split("=")
 					if len(value) == 2:
-						values[value[0].lower()]=value[1].lower()
+						values[value[0].lower()]=value[1]
 					offset = offset + 1
 				else:
 					break
@@ -107,7 +107,7 @@ class XplPlayer( xbmc.Player ) :
 				if part != "}":
 					value=part.split("=")
 					if len(value) == 2:
-						values[value[0].lower()]=value[1].lower()
+						values[value[0].lower()]=value[1]
 					offset = offset + 1
 				else:
 					break
@@ -128,7 +128,7 @@ class XplPlayer( xbmc.Player ) :
 				if( values['calltype'].lower() == "inbound"):
 					cln = values['cln']
 					if( len(cln) == 0 ):
-						cln = "Incoming call"
+						cln = "Incoming\x201A call"
 					self.osdMessage(cln, values['phone'], 20, "phone")	
 			
 			
