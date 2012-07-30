@@ -48,7 +48,7 @@ from xpl import *
 class XplPlayer( xbmc.Player ) :
 # xPL source name
 
-	source = "parasit-xbmc." + gethostname().split(".")[0][:16]
+	source = "parasit-xbmc." + gethostname().replace("-", "").split(".")[0][:16]
 	xpl = Xpl(source, xbmc.getIPAddress())
 	lastState = ""
 	lastKind = ""
@@ -83,7 +83,7 @@ class XplPlayer( xbmc.Player ) :
 	
 
 	def parseBroadcast(self, data):
-		xbmc.log( "FA:HEll yeah!" )
+		xbmc.log("FA, data:" + data)
 		parts = data.split("\n")
 		msgtype = parts[0].lower()
 		offset = 2
@@ -121,8 +121,9 @@ class XplPlayer( xbmc.Player ) :
 			
 			if schema =="osd.basic":
 				if( values['command'].lower() == "write" or values['command'].lower() == "clear"):
-					if( values['text']):
-						self.osdMessage("xPL Message", values['text'], 20, "")
+					if( values['text'] ):
+						displayTime = values.get('delay', "20")
+						self.osdMessage("xPL Message", values['text'].replace("\\n", "\n"), displayTime, "")
 			
 			if schema =="cid.basic" or schema =="cid.netcall" or schema =="cid.meteor" :
 				if( values['calltype'].lower() == "inbound"):
@@ -251,7 +252,7 @@ class XplPlayer( xbmc.Player ) :
 
 	def osdMessage(self, title, message, displayTimeSeconds, icon):
 		#todo: messages containing , or . will screw stuff up. Must find a way to fix
-		executeString = "Notification(%s,%s,%s,%s)" % ( title, message ,str(displayTimeSeconds * 1000), icon )
+		executeString = "Notification(%s,%s,%s,%s)" % ( title, message ,str(displayTimeSeconds) + "000", icon )
 		
 		xbmc.log("FA:executeString=" + executeString)
 		xbmc.executebuiltin(executeString)
