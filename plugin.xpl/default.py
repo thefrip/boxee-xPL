@@ -48,7 +48,7 @@ from xpl import *
 class XplPlayer( xbmc.Player ) :
 # xPL source name
 
-	source = "parasit-xbmc." + gethostname().replace("-", "").split(".")[0][:16]
+	source = "parasit-xbmc." + gethostname().replace("-", "").split(".")[0][:16].lower()
 	xpl = Xpl(source, xbmc.getIPAddress())
 	lastState = ""
 	lastKind = ""
@@ -58,32 +58,32 @@ class XplPlayer( xbmc.Player ) :
 	def __init__ ( self ):
 		xbmc.Player.__init__( self )
 		self.xpl.parse = self.parseBroadcast
-		xbmc.log("FA: init completed")
 		
 		
+	def onStartUp(self):
+		self.monitorXbmc("startup")
+
+	def onShutdown(self):
+		self.monitorXbmc("shutdown")
+
 	def onPlayBackStarted(self):
-		xbmc.log("FA: play");
 		self.monitorXbmc("play")
 
 	def onPlayBackEnded(self):
-		xbmc.log("FA: stop");
 		self.monitorXbmc("stop")
 		
 	def onPlayBackStopped(self):
-		xbmc.log("FA: stop");
 		self.monitorXbmc("stop")
 
 	def onPlayBackPaused(self):
-		xbmc.log("FA: pause");
 		self.monitorXbmc("pause")
 		
 	def onPlayBackResumed(self):
-		xbmc.log("FA: play");
 		self.monitorXbmc("play")
 	
 
 	def parseBroadcast(self, data):
-		xbmc.log("FA, data:" + data)
+		# xbmc.log("FA, data:" + data)
 		parts = data.split("\n")
 		msgtype = parts[0].lower()
 		offset = 2
@@ -188,7 +188,6 @@ class XplPlayer( xbmc.Player ) :
 		if xbmc.Player().isPlaying():
 			try: 
 				if xbmc.Player().isPlayingAudio():
-					xbmc.log("Is playing audio")
 					kind = "audio"
 					if kind != self.lastKind:
 						self.lastState = "stop"
@@ -197,7 +196,6 @@ class XplPlayer( xbmc.Player ) :
 				
 					tag = xbmc.Player().getMusicInfoTag();
 					if self.lastAudioTag is None or self.lastAudioTag.getTitle() != tag.getTitle() or self.lastAudioTag.getArtist() != tag.getArtist() or self.lastAudioTag.getAlbum() != tag.getAlbum():
-						xbmc.log("Try to send broadcast")
 						media = "mp=xbmc\n"
 						media = media + "kind=audio\n"
 						media = media + "title=" + tag.getTitle() + "\n"
@@ -254,18 +252,17 @@ class XplPlayer( xbmc.Player ) :
 		#todo: messages containing , or . will screw stuff up. Must find a way to fix
 		executeString = "Notification(%s,%s,%s,%s)" % ( title, message ,str(displayTimeSeconds) + "000", icon )
 		
-		xbmc.log("FA:executeString=" + executeString)
 		xbmc.executebuiltin(executeString)
 		
 	def destroy(self):
 		self.xpl.stop()
 		
 player=XplPlayer()
+player.onStartUp()
 
 while (not xbmc.abortRequested):
 	xbmc.sleep(1000)
 
-xbmc.log("Destruction requested. Stopping plugin") 
+player.onShutdown()
+xbmc.log("xpl: Destruction requested. Stopping plugin") 
 player.destroy()
-
-

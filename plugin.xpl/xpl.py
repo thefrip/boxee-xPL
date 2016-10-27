@@ -31,13 +31,11 @@ class Xpl() :
         # Try and bind to the base port
         try :
             self.udpSocket.bind(addr)
-            print("Binding to 3865")
         except :
             # A hub is running, so bind to a high port
             self.port = 50000
             foundPort = False
             while( not foundPort ):
-                xbmc.log("FA:Binding to 50000")
                 addr = (self.ip, self.port)
                 try :
                     self.udpSocket.bind(addr)
@@ -45,16 +43,12 @@ class Xpl() :
                 except :
                     self.port += 1
         self.heartBeat()
-        xbmc.log("FA:Heartbeat sent")
         self.t = Thread(target=self.listenForPackets)
-        xbmc.log("Created listen Thread")
         self.t.start()
-        print( "Main thread returns")
         
         
         
     def listenForPackets(self):
-        xbmc.log( "FA:Listening in for packets and stuff" )
         try: 
             while( self._stop != True) :
                 readable, writeable, errored = select.select([self.udpSocket],[],[],self._socketTimeout)
@@ -67,10 +61,9 @@ class Xpl() :
             
     
     def parse(self, data):
-        xbmc.log( data )
+        xbmc.log("xpl: parsing: " + data)
     
     def heartBeat(self):
-        xbmc.log( "Sending heartbeat" )
         self.sendBroadcast("xpl-stat", "*","hbeat.app", "interval=1\nport=" + str(self.port) + "\nremote-ip=" + self.ip + "\nversion=" + self.version)
         self.heartbeat_timer = threading.Timer(60, self.heartBeat)
         self.heartbeat_timer.start()
@@ -83,7 +76,6 @@ class Xpl() :
         hbSock.sendto(msg,("255.255.255.255",3865))
         
     def stop(self):
-        xbmc.log("FA:Stopping xpl")
         self._stop = True
         self.heartbeat_timer.cancel()
         self.sendBroadcast("xpl-stat", "*","hbeat.end", "")
